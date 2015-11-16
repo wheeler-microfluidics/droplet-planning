@@ -1,0 +1,7 @@
+include RELEASE-VERSION
+include version.py
+include setup.py
+include paver-minilib.zip
+recursive-include droplet_planning *
+recursive-exclude droplet_planning *.pyc
+recursive-exclude droplet_planning *~
