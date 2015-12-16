@@ -21,7 +21,8 @@ def get_path_colors(path_colors, df_connected):
     return pd.Series(map_colors[color_map], index=color_map.index)
 
 
-def plot_paths(df_paths, path_colors=None, labelsize=8, axis=None):
+def plot_paths(df_paths, path_colors=None, labelsize=8, axis=None,
+               draw_centers=False):
     '''
     Draw polygon paths from table of vertices (one row per vertex).
 
@@ -53,8 +54,8 @@ def plot_paths(df_paths, path_colors=None, labelsize=8, axis=None):
         #linewidth = 2
         #edge = Polygon(path_i[['x', 'y']].values, edgecolor=color, closed=True,
                        #linewidth=linewidth, facecolor='none')
-        face = Polygon(path_i[['x', 'y']].values, edgecolor='none', closed=True,
-                       facecolor=color, alpha=.45)
+        face = Polygon(path_i[['x', 'y']].values, edgecolor='none',
+                       closed=True, facecolor=color, alpha=.45)
 #         axis.add_patch(edge)
         axis.add_patch(face)
 
@@ -62,20 +63,23 @@ def plot_paths(df_paths, path_colors=None, labelsize=8, axis=None):
     axis.set_xlim(df_paths.x.min(), df_paths.x.max())
     axis.set_ylim(df_paths.y.min(), df_paths.y.max())
 
+    path_centers = (df_paths[['path_id', 'x_center', 'y_center']]
+                    .drop_duplicates())
     # Draw center of each electrode paths.
-    path_centers = df_paths[['path_id', 'x_center', 'y_center']].drop_duplicates()
-    axis.scatter(path_centers.x_center, path_centers.y_center)
-    for i, path_i in path_centers.iterrows():
-        axis.text(path_i.x_center, path_i.y_center,
-                  re.sub(r'[A-Za-z]*', '', path_i.path_id),
-                  fontsize=labelsize)
+    if draw_centers:
+        axis.scatter(path_centers.x_center, path_centers.y_center)
+    if labelsize:
+        for i, path_i in path_centers.iterrows():
+            axis.text(path_i.x_center, path_i.y_center,
+                      re.sub(r'[A-Za-z]*', '', path_i.path_id),
+                      fontsize=labelsize)
 
     axis.set_xlabel('mm')
     axis.set_ylabel('mm')
     return axis
 
 
-def draw_device(df_paths, df_connected, axis=None):
+def draw_device(df_paths, df_connected, axis=None, **kwargs):
     '''
     Draw device using `networkx` graph coloring algorithm.  This ensures that
     no two adjacent polygons are colored the same color.
@@ -89,13 +93,14 @@ def draw_device(df_paths, df_connected, axis=None):
     colors = axis._get_lines.color_cycle
 
     # Collect enough colors from matplotlib color cycle to color electrodes.
-    colors_array = np.array([colors.next() for i in xrange(10)])[[0, 1, 3]]
+    colors_array = np.array([colors.next()
+                             for i in xrange(10)])[[0, 1, 3, 5, 7]]
 
     # Use `networkx` graph coloring algorithm to color electrodes.
     # (Avoids using same color for adjacent electrodes).
     path_colors = get_path_colors(colors_array, df_connected[['source',
                                                               'destination']])
-    plot_paths(df_paths, path_colors, axis=axis)
+    plot_paths(df_paths, path_colors, axis=axis, **kwargs)
     #path_centers = df_paths[['x_center', 'y_center']].drop_duplicates()
     return axis
 
