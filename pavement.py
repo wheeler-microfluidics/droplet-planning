@@ -17,13 +17,13 @@ setup(name='droplet-planning',
       url='https://github.com/wheeler-microfluidics/droplet-planning',
       license='GPL',
       packages=['droplet_planning', ],
-      install_requires=[],
+      install_requires=['svg_model >=0.3.post2, <=0.5'],
       # Install data listed in `MANIFEST.in`
       include_package_data=True)
 
 
 @task
-@needs('generate_setup', 'minilib', 'setuptools.command.sdist') 
+@needs('generate_setup', 'minilib', 'setuptools.command.sdist')
 def sdist():
     """Overrides sdist to make sure that our setup.py is generated."""
     pass
