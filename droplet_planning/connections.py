@@ -75,14 +75,14 @@ def extract_adjacent_paths(df_paths, extend=.5):
 
             temp_dict ['source'] = pathNumber
             reverse_dict['source'] = path
-            temp_dict ['destination'] = path
-            reverse_dict['destination'] = pathNumber
+            temp_dict ['target'] = path
+            reverse_dict['target'] = pathNumber
 
             if(reverse_dict not in row_list):
                 row_list.append(temp_dict)
 
-    df_connected = (pd.DataFrame(row_list)[['source', 'destination']]
-                    .sort(axis=1, ascending=False).sort(['source', 'destination']))
+    df_connected = (pd.DataFrame(row_list)[['source', 'target']]
+                    .sort(axis=1, ascending=False).sort(['source', 'target']))
     return df_connected
 
 
@@ -95,13 +95,13 @@ def get_adjacency_matrix(df_connected):
     `df_connected` to zero-based integer index used for matrix rows and
     columns.
     '''
-    sorted_path_keys = np.sort(np.unique(df_connected[['source', 'destination']]
+    sorted_path_keys = np.sort(np.unique(df_connected[['source', 'target']]
                                          .values.ravel()))
     indexed_paths = pd.Series(sorted_path_keys)
     path_indexes = pd.Series(indexed_paths.index, index=sorted_path_keys)
 
     adjacency_matrix = np.zeros((path_indexes.shape[0], ) * 2, dtype=int)
-    for i_key, j_key in df_connected[['source', 'destination']].values:
+    for i_key, j_key in df_connected[['source', 'target']].values:
         i, j = path_indexes.loc[[i_key, j_key]]
         adjacency_matrix[i, j] = 1
         adjacency_matrix[j, i] = 1

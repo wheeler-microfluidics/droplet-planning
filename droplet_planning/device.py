@@ -60,16 +60,16 @@ class DeviceFrames(object):
         self.df_connected_indexed['source'] = map(str, self.path_indexes
                                                   [self.df_connected
                                                    ['source']])
-        self.df_connected_indexed['destination'] = map(str, self.path_indexes
+        self.df_connected_indexed['target'] = map(str, self.path_indexes
                                                        [self.df_connected
-                                                        ['destination']])
+                                                        ['target']])
 
         self.df_paths_indexed = self.df_paths.copy()
         self.df_paths_indexed['path_id'] = map(str, self.path_indexes
                                                [self.df_paths.path_id])
         self.graph = nx.Graph()
         for index, row in self.df_connected.iterrows():
-            self.graph.add_edge(row['source'], row['destination'],
+            self.graph.add_edge(row['source'], row['target'],
                                 cost=row['cost'])
 
     # Returns a list of nodes on the shortest path from source to target.
