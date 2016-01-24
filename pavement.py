@@ -16,8 +16,8 @@ setup(name='droplet-planning',
       author_email='you@mail.com',
       url='https://github.com/wheeler-microfluidics/droplet-planning',
       license='GPL',
-      packages=['droplet_planning', ],
-      install_requires=['svg_model >=0.3.post2, <=0.5'],
+      packages=['droplet_planning'],
+      install_requires=['svg_model>=0.5.post15'],
       # Install data listed in `MANIFEST.in`
       include_package_data=True)
 
